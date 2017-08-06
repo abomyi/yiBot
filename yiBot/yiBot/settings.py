@@ -20,6 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+# key值均設在環境中確保安全，這裡抓環境中的變數，若環境中無此變數，返回True
 SECRET_KEY = os.environ.get('SECRET_KEY', True)
 LINE_CHANNEL_ACCESS_TOKEN = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN', True)
 LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET', True)

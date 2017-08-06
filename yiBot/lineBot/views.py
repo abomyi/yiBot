@@ -10,10 +10,13 @@ from linebot.webhook import WebhookParser
 
 from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
 
-
-line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
-parser = WebhookParser(LINE_CHANNEL_SECRET)    # 攔截傳到LINE帳號的訊息
-
+try:
+    # 在local端沒有line的各項資料（channel access token & secret key），故本機端運行會直接卡死在這裡
+    line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
+    parser = WebhookParser(LINE_CHANNEL_SECRET)    # 攔截傳到LINE帳號的訊息
+except:
+    line_bot_api = None
+    parser = None
 
 @csrf_exempt
 def lineBot(request):
@@ -29,13 +32,13 @@ def lineBot(request):
         return HttpResponseForbidden()
     except LineBotApiError:    # Line Server問題
         return HttpResponseBadRequest()
-    
+     
     for event in events:
         if isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage): # 確保為文字訊息                
                 response = event.message.text
                 print(response)
-                
+                 
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=response)

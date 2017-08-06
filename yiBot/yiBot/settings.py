@@ -61,6 +61,7 @@ MIDDLEWARE = [
 
 ROLLBAR = {
     'access_token': os.environ.get('ROLLBAR_ACCESS_TOKEN', True),
+#     'access_token': '6c9f431cb8814786a5209230455ccadd',
     'environment': 'development' if DEBUG else 'production',
     'branch': 'master',
     'root': '/absolute/path/to/code/root',

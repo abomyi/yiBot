@@ -21,6 +21,7 @@ except:
 @csrf_exempt
 def lineBot(request):
     if request.method == 'GET':
+        int('abcd')    #test rollbar
         return HttpResponse()
     
     # POST

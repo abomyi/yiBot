@@ -55,7 +55,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
 ]
+
+ROLLBAR = {
+    'access_token': os.environ.get('ROLLBAR_ACCESS_TOKEN', True),
+    'environment': 'development' if DEBUG else 'production',
+    'branch': 'master',
+    'root': '/absolute/path/to/code/root',
+}
 
 ROOT_URLCONF = 'yiBot.urls'
 

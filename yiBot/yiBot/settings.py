@@ -25,6 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', True)
 LINE_CHANNEL_ACCESS_TOKEN = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN', True)
 LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET', True)
+WEATHER_API_KEY = os.environ.get('weather_api_key', True)
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -61,7 +62,6 @@ MIDDLEWARE = [
 
 ROLLBAR = {
     'access_token': os.environ.get('ROLLBAR_ACCESS_TOKEN', True),
-#     'access_token': '6c9f431cb8814786a5209230455ccadd',
     'environment': 'development' if DEBUG else 'production',
     'branch': 'master',
     'root': '/absolute/path/to/code/root',

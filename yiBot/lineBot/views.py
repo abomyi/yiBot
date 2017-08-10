@@ -9,6 +9,7 @@ from linebot.models.send_messages import TextSendMessage
 from linebot.webhook import WebhookParser
 
 from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
+from lineBot.weatherApi import weatherApi
 
 try:
     # 在local端沒有line的各項資料（channel access token & secret key），故本機端運行會直接卡死在這裡
@@ -21,7 +22,7 @@ except:
 @csrf_exempt
 def lineBot(request):
     if request.method == 'GET':
-        int('abcd')    #test rollbar
+#         return weatherApi('text')
         return HttpResponse()
     
     # POST
@@ -38,8 +39,12 @@ def lineBot(request):
         if isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage): # 確保為文字訊息                
                 response = event.message.text
+                if '@yibot' in response:
+                    response.replace('@yibot', '')
+                else:
+                    continue
                 print(response)
-                 
+                
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text=response)

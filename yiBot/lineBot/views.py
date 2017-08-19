@@ -41,7 +41,7 @@ def lineBot(request):
             if isinstance(event.message, TextMessage): # 確保為文字訊息                
                 response = event.message.text
                 if '@yibot' in response:
-                    response.replace('@yibot', '')
+                    response = response.replace('@yibot', '').strip()
                 else:
                     continue
                 print(response)

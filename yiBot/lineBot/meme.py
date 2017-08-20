@@ -5,7 +5,7 @@ import requests
 
 
 def findMeme(keyword):
-    googleURL = 'https://www.google.com.tw/search?q={0}&safe=off&source=lnms&tbm=isch'.format(keyword)
+    googleURL = 'https://www.google.com.tw/search?q={0}&safe=on&source=lnms&tbm=isch'.format(keyword)
     
     result = requests.get(googleURL)
     

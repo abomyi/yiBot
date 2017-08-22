@@ -53,7 +53,7 @@ def lineBot(request):
                         ImageSendMessage(original_content_url=imgURL,
                                          preview_image_url=imgURL)
                     )
-                except linebot.exceptions.LineBotApiError as e:
+                except LineBotApi.exceptions.LineBotApiError as e:
                     print(e.status_code)
                     print(e.error.message)
                     print(e.error.details)

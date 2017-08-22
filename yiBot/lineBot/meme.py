@@ -13,5 +13,10 @@ def findMeme(keyword):
     result = BeautifulSoup(res.text, 'html.parser')
     
     images = [json.loads(div.text)["ou"] for div in result.find_all("div",{"class":"rg_meta"})[:5]]
+    image = random.choice(images)
     
-    return random.choice(images)
+    if not image.find('https:') < 0:
+        # Linebot 僅接受 https之圖像網址，故在此強制取代為https (很糟糕的方法，但是實用)
+        image = image.replace('http', 'https')
+    
+    return image

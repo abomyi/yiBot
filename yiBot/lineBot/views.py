@@ -55,10 +55,11 @@ def lineBot(request):
                                          preview_image_url=imgURL)
                     )
                 except linebot.exceptions.LineBotApiError as e:
-                    print(imgURL)
-                    print(e.status_code)
-                    print(e.error.message)
-                    print(e.error.details)
+                    print('圖片網址:', imgURL)
+                    print('錯誤代碼:', e.status_code)
+                    print('錯誤訊息:', e.error.message)
+                    print('詳細資訊:', e.error.details)
+                    print('可在 https://devdocs.line.me/en/#common-specifications 查到對應代碼及錯誤')
                     
                 '''
                 try:

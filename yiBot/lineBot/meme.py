@@ -13,5 +13,6 @@ def findMeme(keyword):
     result = BeautifulSoup(res.text, 'html.parser')
     
     images = [json.loads(div.text)["ou"] for div in result.find_all("div",{"class":"rg_meta"})[:5]]
-        
-    return random.choice(images)
+    image = random.choice(images)
+    print(image)
+    return image

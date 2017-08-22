@@ -46,6 +46,14 @@ def lineBot(request):
                     continue
                 print(response)
                 
+                imgURL = findMeme(response)
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    ImageSendMessage(original_content_url=imgURL,
+                                     preview_image_url=imgURL)
+                )
+                
+                '''
                 try:
                     imgURL = findMeme(response)
                     line_bot_api.reply_message(
@@ -58,7 +66,7 @@ def lineBot(request):
                         event.reply_token,
                         TextSendMessage(text=response)
                     )
-                
+                '''
     return HttpResponse()
     
     

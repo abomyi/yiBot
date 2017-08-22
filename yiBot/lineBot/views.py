@@ -1,6 +1,7 @@
 from django.http.response import HttpResponse, HttpResponseForbidden, \
     HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+import linebot
 from linebot.api import LineBotApi
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models.events import MessageEvent
@@ -53,7 +54,7 @@ def lineBot(request):
                         ImageSendMessage(original_content_url=imgURL,
                                          preview_image_url=imgURL)
                     )
-                except LineBotApi.exceptions.LineBotApiError as e:
+                except linebot.exceptions.LineBotApiError as e:
                     print(e.status_code)
                     print(e.error.message)
                     print(e.error.details)

@@ -47,7 +47,6 @@ def lineBot(request):
                 print(response)
                 
                 imgURL = findMeme(response)
-                print(imgURL)
                 line_bot_api.reply_message(
                     event.reply_token,
                     ImageSendMessage(original_content_url=imgURL,

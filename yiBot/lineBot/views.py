@@ -47,17 +47,19 @@ def lineBot(request):
                     continue
                 print(response)
                 
+                imgURL = findMeme(response)
                 try:
-                    imgURL = findMeme(response)
                     line_bot_api.reply_message(
                         event.reply_token,
                         ImageSendMessage(original_content_url=imgURL,
                                          preview_image_url=imgURL)
                     )
                 except linebot.exceptions.LineBotApiError as e:
+                    print(imgURL)
                     print(e.status_code)
                     print(e.error.message)
                     print(e.error.details)
+                    
                 '''
                 try:
                     imgURL = findMeme(response)

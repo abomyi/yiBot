@@ -45,8 +45,7 @@ def lineBot(request):
                     response = response.replace('@yibot', '').strip()
                 else:
                     continue
-                print(response)
-                
+                                
                 imgURL = findMeme(response)
                 try:
                     line_bot_api.reply_message(
@@ -55,12 +54,11 @@ def lineBot(request):
                                          preview_image_url=imgURL)
                     )
                 except linebot.exceptions.LineBotApiError as e:
-                    print('圖片網址:', imgURL)
                     print('錯誤代碼:', e.status_code)
                     print('錯誤訊息:', e.error.message)
                     print('詳細資訊:', e.error.details)
                     print('可在 https://devdocs.line.me/en/#common-specifications 查到對應代碼及錯誤')
-                    
+                print(response, imgURL)    
                 '''
                 try:
                     imgURL = findMeme(response)

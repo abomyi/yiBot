@@ -48,16 +48,21 @@ def lineBot(request):
                                 
                 imgURL = findMeme(response)
                 if not imgURL:
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=response)
-                    )
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        StickerSendMessage(packageId='38',
-                                           stickerId='2')
-                    )
-                    
+                    try:
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text=response)
+                        )
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            StickerSendMessage(packageId='1',
+                                               stickerId='1')    #38 2
+                        )
+                    except linebot.exceptions.LineBotApiError as e:
+                        print('錯誤代碼:', e.status_code)
+                        print('錯誤訊息:', e.error.message)
+                        print('詳細資訊:', e.error.details)
+                        
                 try:
                     line_bot_api.reply_message(
                         event.reply_token,

@@ -6,7 +6,7 @@ from linebot.api import LineBotApi
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models.events import MessageEvent
 from linebot.models.messages import TextMessage
-from linebot.models.send_messages import TextSendMessage, ImageSendMessage
+from linebot.models.send_messages import TextSendMessage, ImageSendMessage, StickerSendMessage
 from linebot.webhook import WebhookParser
 
 from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
@@ -47,6 +47,17 @@ def lineBot(request):
                     continue
                                 
                 imgURL = findMeme(response)
+                if not imgURL:
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=response)
+                    )
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        StickerSendMessage(packageId='38',
+                                           stickerId='2')
+                    )
+                    
                 try:
                     line_bot_api.reply_message(
                         event.reply_token,
@@ -58,21 +69,7 @@ def lineBot(request):
                     print('錯誤訊息:', e.error.message)
                     print('詳細資訊:', e.error.details)
                     print('可在 https://devdocs.line.me/en/#common-specifications 查到對應代碼及錯誤')
-                print(response, imgURL)    
-                '''
-                try:
-                    imgURL = findMeme(response)
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        ImageSendMessage(original_content_url=imgURL,
-                                         preview_image_url=imgURL)
-                    )
-                except:
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=response)
-                    )
-                '''
+                print(response, imgURL)
     return HttpResponse()
     
     

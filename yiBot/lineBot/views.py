@@ -49,10 +49,10 @@ def lineBot(request):
                 imgURL = findMeme(response)
                 if not imgURL:
                     try:
-                        line_bot_api.reply_message(
-                            event.reply_token,
-                            TextSendMessage(text=response)
-                        )
+#                         line_bot_api.reply_message(
+#                             event.reply_token,
+#                             TextSendMessage(text=response)
+#                         )
                         line_bot_api.reply_message(
                             event.reply_token,
                             StickerSendMessage(package_id='38',

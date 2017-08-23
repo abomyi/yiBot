@@ -53,6 +53,7 @@ def lineBot(request):
 #                             event.reply_token,
 #                             TextSendMessage(text=response)
 #                         )
+                        #FIXME: 只能reply一次，想辦法把用戶ID記住，再傳一次
                         line_bot_api.reply_message(
                             event.reply_token,
                             StickerSendMessage(package_id='2',

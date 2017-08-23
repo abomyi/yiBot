@@ -55,8 +55,8 @@ def lineBot(request):
 #                         )
                         line_bot_api.reply_message(
                             event.reply_token,
-                            StickerSendMessage(package_id='1',
-                                               sticker_id='1')
+                            StickerSendMessage(package_id='2',
+                                               sticker_id='38')
                         )
                     except linebot.exceptions.LineBotApiError as e:
                         print('錯誤代碼:', e.status_code)

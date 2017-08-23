@@ -14,7 +14,7 @@ def findMeme(keyword):
     
 #     images = [json.loads(div.text)['ou'] for div in result.find_all('div',{'class':'rg_meta'})[:5]]
     images = []
-    for div in result.find_all('div', {'class':'rg_meta'})[0]:
+    for div in result.find_all('div', {'class':'rg_meta'})[:1]:
         image = json.loads(div.text)['ou']
         if image.find('https:') != -1:
             images.append(image)

@@ -55,14 +55,15 @@ def lineBot(request):
                         )
                         line_bot_api.reply_message(
                             event.reply_token,
-                            StickerSendMessage(packageId=1,
-                                               stickerId=1)    #38 2
+                            StickerSendMessage(package_id='38',
+                                               sticker_id='2')
                         )
                     except linebot.exceptions.LineBotApiError as e:
                         print('錯誤代碼:', e.status_code)
                         print('錯誤訊息:', e.error.message)
                         print('詳細資訊:', e.error.details)
                     continue
+                
                 try:
                     line_bot_api.reply_message(
                         event.reply_token,
@@ -75,6 +76,7 @@ def lineBot(request):
                     print('詳細資訊:', e.error.details)
                     print('可在 https://devdocs.line.me/en/#common-specifications 查到對應代碼及錯誤')
                 print(response, imgURL)
+                
     return HttpResponse()
     
     

@@ -97,6 +97,7 @@ def updateUserList(event):
     source = event.source
     userID = source.user_id
     chatType = source.type
+    print(source, userID, chatType)
     profile = line_bot_api.get_profile(userID)
 #     print(profile.display_name)    #使用者姓名
 #     print(profile.user_id)    #使用者ID

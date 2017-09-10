@@ -1,0 +1,22 @@
+群組傳訊：
+    {"message": {"id": "...", "text": "...", "type": "text"}, "replyToken": "...", "source": {"groupId": "...", "type": "group", "userId": "..."}, "timestamp": 1505029399122, "type": "message"}
+    
+    解析source：
+      {'user_id': '...', 'type': 'group', 'group_id': '???????????????'}
+
+
+房間傳訊：
+    {"message": {"id": "...", "text": "...", "type": "text"}, "replyToken": "...", "source": {"roomId": "...", "type": "room", "userId": "..."}, "timestamp": 1505029000287, "type": "message"}
+    
+    解析source：
+      {'type': 'room', 'room_id': '...', 'user_id': '...'}
+
+
+
+個人傳訊：
+    {"message": {"id": "...", "text": "bb", "type": "text"}, "replyToken": "...", "source": {"type": "user", "userId": "..."}, "timestamp": 1505029256111, "type": "message"}
+    
+    解析source：
+      {'type': 'user', 'user_id': '...'}
+
+

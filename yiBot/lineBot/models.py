@@ -9,4 +9,4 @@ class LineUser(models.Model):
     commander = models.BooleanField(default=False)                  #是否能夠下特殊指令
     
     def __str__(self):
-        return self.chatFrom + '_' + self.name + '_' + self.lineID
+        return self.lineID

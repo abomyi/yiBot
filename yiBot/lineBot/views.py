@@ -47,7 +47,10 @@ def lineBot(request):
                 response = event.message.text
                 if '@yibot' in response:
                     response = response.replace('@yibot', '').strip()
-                elif '@send' in response and isCommander(event.source.user_id):
+                elif '@send' in response:
+                    if not isCommander(event.source.user_id):
+                        line_bot_api.reply_message(event.reply_token, TextSendMessage(text='歹勢，您無權限'))
+                        continue
                     response = response.replace('@send', '').split(', ')
                     to, message = response[0], response[1]
                     line_bot_api.push_message(to, TextMessage(text=message))
@@ -97,7 +100,18 @@ def updateUserList(event):
     source = event.source
     userID = source.user_id
     chatType = source.type
-    profile = line_bot_api.get_profile(userID)
+    
+    if chatType == 'group':
+        profile = line_bot_api.get_group_member_profile(source.group_id, userID)
+        LineUser.objects.get_or_create(chatFrom='group', lineID=source.group_id)
+    elif chatType == 'room':
+#         profile = line_bot_api.get_room_member_profile(source.room_id, userID)
+        LineUser.objects.get_or_create(chatFrom='room', lineID=source.room_id)
+    else:    #user
+        profile = line_bot_api.get_profile(userID)
+        user = LineUser.objects.filter(lineID=userID)
+        if not user:
+            LineUser.objects.create(name=profile.display_name, chatFrom='user', lineID=userID)
 #     print(profile.display_name)    #使用者姓名
 #     print(profile.user_id)    #使用者ID
 #     print(profile.picture_url)    #使用者大頭照網址
@@ -110,15 +124,6 @@ def updateUserList(event):
     #寫了exception還是會爆炸，在ObjectDoesNotExist中print東西是正常運作的
     #但是程式就是會一直卡在get error那邊不明所以，故改採filter的方式
     
-    user = LineUser.objects.filter(lineID=userID)
-    if not user:
-        LineUser.objects.create(name=profile.display_name, chatFrom='user', lineID=userID)
-    
-    if chatType == 'group':
-        LineUser.objects.get_or_create(chatFrom='group', lineID=source.group_id)
-    
-    if chatType == 'room':
-        LineUser.objects.get_or_create(chatFrom='room', lineID=source.room_id)
     
     
 def isCommander(userID):

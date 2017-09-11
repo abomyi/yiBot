@@ -100,7 +100,6 @@ def updateUserList(event):
     source = event.source
     userID = source.user_id
     chatType = source.type
-    print(source, userID, chatType)
     
     if chatType == 'group':
         profile = line_bot_api.get_group_member_profile(source.group_id, userID)

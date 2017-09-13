@@ -15,3 +15,6 @@ class LineUser(models.Model):
 class Card(models.Model):
     name = models.CharField(max_length=150)
     weight = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.name

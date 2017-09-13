@@ -14,6 +14,10 @@ def drawCard(msg):
     except:  #沒指定次數
         times = 1
 
+    if times > 5:
+        # Line貌似有回傳訊息不得超過五行之規定(不確定)
+        times = 5
+
     cards = Card.objects.all()
 
     values, weights = [], []

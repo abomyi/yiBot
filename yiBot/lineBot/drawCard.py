@@ -8,16 +8,16 @@ def drawCard(msg):
     #===========================================================================
     timesIndex = msg.find('次')
     try:
-        times = int(msg[int(timesIndex - 1)])
-    except ValueError:
+        times = int(msg[:timesIndex])
+    except ValueError:  #格式不符
         times = 1
     except:  #沒指定次數
         times = 1
 
-    if times > 5:
-        # Line貌似有回傳訊息不得超過五行之規定(不確定)
-        times = 5
-
+#    if times > 5:
+#        # Line貌似有回傳訊息不得超過五行之規定(不確定)
+#        times = 5
+#    print(times)
     cards = Card.objects.all()
 
     values, weights = [], []

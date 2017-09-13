@@ -28,6 +28,7 @@ except:
 def lineBot(request):
     if request.method == 'GET':
 #         return weatherApi('text')
+        print(drawCard('100次'))
         return HttpResponse()
     
     # POST

@@ -36,7 +36,7 @@ def drawCard(msg):
 
     response = ''
     for name, num in resultDict.items():
-        response += name + ':' + num + '\n'
+        response += name + ':' + str(num) + '\n'
 
     return response
 

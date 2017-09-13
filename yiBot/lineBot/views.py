@@ -28,7 +28,6 @@ except:
 def lineBot(request):
     if request.method == 'GET':
 #         return weatherApi('text')
-        print(drawCard('100次'))
         return HttpResponse()
     
     # POST
@@ -60,7 +59,6 @@ def lineBot(request):
                 elif '@抽卡' in msg:
                     msg = msg.replace('@抽卡', '')
                     result = drawCard(msg)
-                    print(result)
                     try:
                         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=result))
                     except linebot.exceptions.LineBotApiError as e:

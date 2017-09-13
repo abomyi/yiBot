@@ -59,7 +59,13 @@ def lineBot(request):
                 elif '@抽卡' in msg:
                     msg = msg.replace('@抽卡', '')
                     result = drawCard(msg)
-                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=result))
+                    print(result)
+                    try:
+                        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=result))
+                    except linebot.exceptions.LineBotApiError as e:
+                        print('錯誤代碼:', e.status_code)
+                        print('錯誤訊息:', e.error.message)
+                        print('詳細資訊:', e.error.details)
                     continue
                 else:
                     continue

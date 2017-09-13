@@ -8,8 +8,10 @@ def drawCard(msg):
     #===========================================================================
     timesIndex = msg.find('次')
     try:
-        times = msg[int(timesIndex - 1)]
+        times = int(msg[int(timesIndex - 1)])
     except ValueError:
+        times = 1
+    except:  #沒指定次數
         times = 1
 
     cards = Card.objects.all()

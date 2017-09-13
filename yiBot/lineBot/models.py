@@ -10,3 +10,8 @@ class LineUser(models.Model):
     
     def __str__(self):
         return self.lineID
+
+
+class Card(models.Model):
+    name = models.CharField(max_length=150)
+    weight = models.FloatField(default=0)

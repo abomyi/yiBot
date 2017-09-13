@@ -14,6 +14,7 @@ from lineBot.weatherApi import weatherApi
 from lineBot.meme import findMeme
 from lineBot.models import LineUser
 from django.shortcuts import get_object_or_404
+from lineBot.drawCard import drawCard
 
 try:
     # 在local端沒有line的各項資料（channel access token & secret key），故本機端運行會直接卡死在這裡
@@ -44,21 +45,26 @@ def lineBot(request):
         
         if isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage): # 確保為文字訊息                
-                response = event.message.text
-                if '@yibot' in response:
-                    response = response.replace('@yibot', '').strip()
-                elif '@send' in response:
+                msg = event.message.text
+                if '@yibot' in msg:
+                    msg = msg.replace('@yibot', '').strip()
+                elif '@send' in msg:
                     if not isCommander(event.source.user_id):
                         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='歹勢，您無權限'))
                         continue
-                    response = response.replace('@send', '').split(', ')
-                    to, message = response[0], response[1]
+                    msg = msg.replace('@send', '').split(', ')
+                    to, message = msg[0], msg[1]
                     line_bot_api.push_message(to, TextMessage(text=message))
+                    continue
+                elif '@抽卡' in msg:
+                    msg = msg.replace('@抽卡', '')
+                    result = drawCard(msg)
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=result))
                     continue
                 else:
                     continue
                 
-                imgURL = findMeme(response)
+                imgURL = findMeme(msg)
                 if not imgURL:
                     try:
 #                         line_bot_api.reply_message(
@@ -88,7 +94,7 @@ def lineBot(request):
                     print('錯誤訊息:', e.error.message)
                     print('詳細資訊:', e.error.details)
                     print('可在 https://devdocs.line.me/en/#common-specifications 查到對應代碼及錯誤')
-                print(response, imgURL)
+                print(msg, imgURL)
                 
     return HttpResponse()
     

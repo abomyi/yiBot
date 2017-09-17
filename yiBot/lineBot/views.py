@@ -27,7 +27,6 @@ except:
 @csrf_exempt
 def lineBot(request):
     if request.method == 'GET':
-#         weatherApi('台中')
         return HttpResponse()
     
     # POST
@@ -66,23 +65,17 @@ def lineBot(request):
                     success, response = weatherApi(msg)
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
                     if not success:
-                        try:
-                            line_bot_api.push_message(replyID, StickerSendMessage(package_id='2', sticker_id='38'))
-                            
-                        except linebot.exceptions.LineBotApiError as e:
-                            print('錯誤代碼:', e.status_code)
-                            print('錯誤訊息:', e.error.message)
-                            print('詳細資訊:', e.error.details)
+                        line_bot_api.push_message(replyID, StickerSendMessage(package_id='2', sticker_id='38'))
                     continue
                 else:
                     continue
                 
                 imgURL = findMeme(msg)
                 if not imgURL:
-#                         line_bot_api.reply_message(
-#                             event.reply_token,
-#                             TextSendMessage(text=response)
-#                         )
+#                     line_bot_api.reply_message(
+#                         event.reply_token,
+#                         TextSendMessage(text=response)
+#                     )
                     #FIXME: 只能reply一次，想辦法把用戶ID記住，再傳一次
                     line_bot_api.reply_message(
                         event.reply_token,

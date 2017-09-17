@@ -17,7 +17,7 @@ def weatherApi(position):
     except:
         return False, '很抱歉，找不到該地區 「{0}」 的資料。\n請確認地區名稱是否正確，或以縣市名稱搜尋。'.format(position)
     response = locationName + '\n'
-    response += '溫度(攝氏)： {0} \n風速： {1}m/s \n相對溼度： {2}% \n累積雨量： {3}mm \n紫外線指數： {4} \n'.format(round(float(weatherObj.temp),1), weatherObj.wdsd,
+    response += '溫度： {0} ℃ \n風速： {1} m/s \n相對溼度： {2} % \n累積雨量： {3} mm \n紫外線指數： {4} \n'.format(round(float(weatherObj.temp),1), weatherObj.wdsd,
                                                                                             round(float(weatherObj.humd)*100), weatherObj.r24, weatherObj.h_uvi)
     
     return True, response

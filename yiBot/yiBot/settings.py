@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', True)
 LINE_CHANNEL_ACCESS_TOKEN = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN', True)
 LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET', True)
-WEATHER_API_KEY = os.environ.get('weather_api_key', True)
+WEATHER_API_KEY = os.environ.get('WEATHER_API_KEY', True)
 
 
 # SECURITY WARNING: don't run with debug turned on in production!

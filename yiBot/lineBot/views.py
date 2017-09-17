@@ -27,7 +27,7 @@ except:
 @csrf_exempt
 def lineBot(request):
     if request.method == 'GET':
-#         return weatherApi('text')
+#         weatherApi('台中')
         return HttpResponse()
     
     # POST
@@ -41,7 +41,7 @@ def lineBot(request):
         return HttpResponseBadRequest()
         
     for event in events:
-        updateUserList(event)
+        replyID = updateUserList(event)
         
         if isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage): # 確保為文字訊息                
@@ -59,33 +59,36 @@ def lineBot(request):
                 elif '@抽卡' in msg:
                     msg = msg.replace('@抽卡', '')
                     result = drawCard(msg)
-                    try:
-                        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=result))
-                    except linebot.exceptions.LineBotApiError as e:
-                        print('錯誤代碼:', e.status_code)
-                        print('錯誤訊息:', e.error.message)
-                        print('詳細資訊:', e.error.details)
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=result))
+                    continue
+                elif '@天氣' in msg:
+                    msg = msg.replace('@天氣', '').replace('台', '臺').strip()
+                    success, response = weatherApi(msg)
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
+                    if not success:
+                        try:
+                            line_bot_api.push_message(replyID, StickerSendMessage(package_id='2', sticker_id='38'))
+                            
+                        except linebot.exceptions.LineBotApiError as e:
+                            print('錯誤代碼:', e.status_code)
+                            print('錯誤訊息:', e.error.message)
+                            print('詳細資訊:', e.error.details)
                     continue
                 else:
                     continue
                 
                 imgURL = findMeme(msg)
                 if not imgURL:
-                    try:
 #                         line_bot_api.reply_message(
 #                             event.reply_token,
 #                             TextSendMessage(text=response)
 #                         )
-                        #FIXME: 只能reply一次，想辦法把用戶ID記住，再傳一次
-                        line_bot_api.reply_message(
-                            event.reply_token,
-                            StickerSendMessage(package_id='2',
-                                               sticker_id='38')
-                        )
-                    except linebot.exceptions.LineBotApiError as e:
-                        print('錯誤代碼:', e.status_code)
-                        print('錯誤訊息:', e.error.message)
-                        print('詳細資訊:', e.error.details)
+                    #FIXME: 只能reply一次，想辦法把用戶ID記住，再傳一次
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        StickerSendMessage(package_id='2',
+                                           sticker_id='38')
+                    )
                     continue
                 
                 try:
@@ -113,12 +116,15 @@ def updateUserList(event):
     chatType = source.type
     
     if chatType == 'group':
-        profile = line_bot_api.get_group_member_profile(source.group_id, userID)
-        LineUser.objects.get_or_create(chatFrom='group', lineID=source.group_id)
+        replyID = source.group_id
+#         profile = line_bot_api.get_group_member_profile(replyID, userID)
+        LineUser.objects.get_or_create(chatFrom='group', lineID=replyID)
     elif chatType == 'room':
-#         profile = line_bot_api.get_room_member_profile(source.room_id, userID)
-        LineUser.objects.get_or_create(chatFrom='room', lineID=source.room_id)
+        replyID = source.room_id
+#         profile = line_bot_api.get_room_member_profile(replyID, userID)
+        LineUser.objects.get_or_create(chatFrom='room', lineID=replyID)
     else:    #user
+        replyID = userID
         profile = line_bot_api.get_profile(userID)
         user = LineUser.objects.filter(lineID=userID)
         if not user:
@@ -135,7 +141,8 @@ def updateUserList(event):
     #寫了exception還是會爆炸，在ObjectDoesNotExist中print東西是正常運作的
     #但是程式就是會一直卡在get error那邊不明所以，故改採filter的方式
     
-    
+    return replyID
+
     
 def isCommander(userID):
     user = get_object_or_404(LineUser, lineID=userID)

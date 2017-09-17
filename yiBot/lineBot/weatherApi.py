@@ -1,19 +1,44 @@
-from yiBot.settings import WEATHER_API_KEY
-import requests
 import json
 
+import requests
 
-def weatherApi(text):
-    
-    apiUrl = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?locationName={0}&Authorization={1}'.format(WEATHER_API_KEY)
+from yiBot.settings import WEATHER_API_KEY
+
+
+def weatherApi(position):
+    apiUrl = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?locationName={0}&Authorization={1}'.format(position, WEATHER_API_KEY)
     response = requests.get(apiUrl, verify=False)
     jsonDate = json.loads(response.text)
-    print(jsonDate['records']['location'][0]['locationName'])
-    print(jsonDate['records']['location'][0]["weatherElement"][3])
     
-#     'https://opendata.cwb.gov.tw/api/v1/rest/datastore/O-A0003-001?Authorization=WEATER_API_KEY'
+    try:
+        locationName = jsonDate['records']['location'][0]['locationName']
+        weatherData = jsonDate['records']['location'][0]["weatherElement"]
+        weatherObj = WeatherObject(weatherData)
+    except:
+        return False, '很抱歉，找不到該地區 「{0}」 的資料。\n請確認地區名稱是否正確，或以縣市名稱搜尋。'.format(position)
+    response = locationName + '\n'
+    response += '溫度(攝氏)： {0} \n風速： {1}m/s \n相對溼度： {2}% \n累積雨量： {3}mm \n紫外線指數： {4} \n'.format(round(float(weatherObj.temp),1), weatherObj.wdsd,
+                                                                                            round(float(weatherObj.humd)*100), weatherObj.r24, weatherObj.h_uvi)
     
-    return ''
+    return True, response
+
+
+class WeatherObject:
+    def __init__(self, weatherElement):
+        for dictData in weatherElement:
+            if dictData['elementName'] == '24R':
+                dictData['elementName'] = 'R24'
+            setattr(self, dictData['elementName'].lower(), dictData['elementValue'])
+
+
+# 來源：http://opendata.cwb.gov.tw/opendatadoc/DIV2/A0003-001.pdf 欄位對照表(專案內亦有此對照表，路徑：/lineBot/weatherDoc/A0003-001.pdf
+# 實際上在氣象局API官網根本找不到這個連結，故無法保證該對照表是正確的
+weatherStandFor = {'H_F10': '本時最大10分鐘平均風速，單位 公尺/秒', 'WDSD': '風速，單位 公尺/秒', 'D_TX': '本日最高溫，單位 攝氏', 
+                   'D_TXT': '本日最高溫發生時間，hhmm (小時分鐘)', 'H_FX': '小時最大陣風風速,單位 公尺/秒', 
+                   'ELEV': '高度，單位 公尺', 'PRES': '測站氣壓,單位 百帕', 
+                   'H_F10T': '本時最大10分鐘平均風速發生時間，hhmm (小時分鐘)', 'H_UVI': '本小時紫外線指數', 'HUMD': '相對濕度,單位 百分比率,此處以實數 0-1.0 記錄', 
+                   '24R': '日累積雨量,單位 毫米', 'H_XD': '小時最大陣風風向,單位 度', 'H_10D': '本時最大10分鐘平均風向，單位 度', 'D_TS': '本日總日照時數，單位 小時', 
+                   'H_FXT': '小時最大陣風時間,yyyy-MM-ddThh:mm:ss+08:00', 'TEMP': '溫度,單位 攝氏', 'WDIR': '風向,單位 度,一般風向 0 表示無風'}
 
 
 # 來源：http://e-service.cwb.gov.tw/wdps/obs/state.htm

@@ -1,0 +1,37 @@
+<!doctype html>
+{% load staticfiles %}
+<html>
+<head>
+  <title>To Do List</title>
+  <meta charset=utf-8>
+  <meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  {% block css %}{% endblock %}
+</head>
+
+<body>
+{% block content %}
+  typing something to do
+  
+  {% for div in divBlocks %}
+  <div>待辦事項</div>
+  {% endfor %}
+  
+  <form method=post action="{% url 'todoList:createItem' %}">
+    {% csrf_token %}
+    {% for field in listForm %}
+      <p>{{field.label}}：{{field}}<span>{{field.errors}}</span></p>  
+    {% endfor %}
+  </form>
+  
+  <p><a href="{% url 'fourm:fourm' %}">論壇</a></p>
+  <p><a href="{% url 'novelCrawler:novelCrawler' %}">爬書蟲</a></p>
+  
+
+{% endblock %}
+</body>
+
+<script></script>
+{% block script %}
+{% endblock %}
+
+</html>

@@ -1,20 +1,27 @@
 from django.http.response import HttpResponse, HttpResponseForbidden, \
     HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 import linebot
 from linebot.api import LineBotApi
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models.events import MessageEvent
+from linebot.models.imagemap import ImagemapSendMessage, BaseSize, \
+    URIImagemapAction, ImagemapArea, MessageImagemapAction
 from linebot.models.messages import TextMessage
 from linebot.models.send_messages import TextSendMessage, ImageSendMessage, StickerSendMessage
+from linebot.models.template import ConfirmTemplate, MessageTemplateAction, \
+    TemplateSendMessage, ButtonsTemplate, URITemplateAction, \
+    PostbackTemplateAction, CarouselTemplate, CarouselColumn, \
+    ImageCarouselTemplate, ImageCarouselColumn, DatetimePickerTemplateAction
 from linebot.webhook import WebhookParser
 
-from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
-from lineBot.weatherApi import weatherApi
+from lineBot.drawCard import drawCard
 from lineBot.meme import findMeme
 from lineBot.models import LineUser
-from django.shortcuts import get_object_or_404
-from lineBot.drawCard import drawCard
+from lineBot.weatherApi import weatherApi
+from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
+
 
 try:
     # 在local端沒有line的各項資料（channel access token & secret key），故本機端運行會直接卡死在這裡
@@ -23,6 +30,7 @@ try:
 except:
     line_bot_api = None
     parser = None
+
 
 @csrf_exempt
 def lineBot(request):
@@ -47,6 +55,92 @@ def lineBot(request):
                 msg = event.message.text
                 if '@yibot' in msg:
                     msg = msg.replace('@yibot', '').strip()
+                elif '@imgmap' in msg:                    
+                    # FIXME: 沒作用
+                    imagemap_message = ImagemapSendMessage(
+                        base_url='https://example.com/base',
+                        alt_text='this is an imagemap',
+                        base_size=BaseSize(height=1040, width=1040),
+                        actions=[
+                            URIImagemapAction(
+                                link_uri='https://example.com/',
+                                area=ImagemapArea(
+                                    x=0, y=0, width=520, height=1040
+                                )
+                            ),
+                            MessageImagemapAction(
+                                text='hello',
+                                area=ImagemapArea(
+                                    x=520, y=0, width=520, height=1040
+                                )
+                            )
+                        ]
+                    )                    
+                    line_bot_api.reply_message(event.reply_token, imagemap_message)
+                    continue
+                elif '@confirm' in msg:
+                    confirm_template = ConfirmTemplate(text='Do it?', actions=[
+                        MessageTemplateAction(label='Yes', text='Yes!'),
+                        MessageTemplateAction(label='No', text='No!'),
+                    ])
+                    template_message = TemplateSendMessage(
+                        alt_text='Confirm alt text', template=confirm_template)
+                    line_bot_api.reply_message(event.reply_token, template_message)
+                    continue
+                
+                elif '@button' in msg:
+                    buttons_template = ButtonsTemplate(
+                        title='My buttons sample', text='Hello, my buttons', actions=[
+                            URITemplateAction(
+                                label='Go to line.me', uri='https://line.me'),
+                            PostbackTemplateAction(label='ping', data='ping'),
+                            PostbackTemplateAction(
+                                label='ping with text', data='ping',
+                                text='ping'),
+                            MessageTemplateAction(label='Translate Rice', text='米')
+                        ])
+                    template_message = TemplateSendMessage(
+                        alt_text='Buttons alt text', template=buttons_template)
+                    line_bot_api.reply_message(event.reply_token, template_message)
+                    continue
+                
+                elif '@carousel' in msg:
+                    carousel_template = CarouselTemplate(columns=[
+                        CarouselColumn(text='hoge1', title='fuga1', actions=[
+                            URITemplateAction(
+                                label='Go to line.me', uri='https://line.me'),
+                            PostbackTemplateAction(label='ping', data='ping')
+                        ]),
+                        CarouselColumn(text='hoge2', title='fuga2', actions=[
+                            PostbackTemplateAction(
+                                label='ping with text', data='ping',
+                                text='ping'),
+                            MessageTemplateAction(label='Translate Rice', text='米')
+                        ]),
+                    ])
+                    template_message = TemplateSendMessage(
+                        alt_text='Carousel alt text', template=carousel_template)
+                    line_bot_api.reply_message(event.reply_token, template_message)
+                    continue
+                elif '@img_carousel' in msg:
+                    image_carousel_template = ImageCarouselTemplate(columns=[
+                        ImageCarouselColumn(image_url='https://dvblobcdnea.azureedge.net//Content/Upload/Popular/Images/2017-06/e99e6b5e-ca6c-4c19-87b7-dfd63db6381a_m.jpg',
+                                            action=DatetimePickerTemplateAction(label='datetime',
+                                                                                data='datetime_postback',
+                                                                                mode='datetime')),
+                        ImageCarouselColumn(image_url='https://cdn2.ettoday.net/images/2457/d2457712.jpg',
+                                            action=DatetimePickerTemplateAction(label='date',
+                                                                                data='date_postback',
+                                                                                mode='date'))
+                    ])
+                    template_message = TemplateSendMessage(
+                        alt_text='ImageCarousel alt text', template=image_carousel_template)
+                    line_bot_api.reply_message(event.reply_token, template_message)
+                
+                
+                
+                
+                
                 elif '@send' in msg:
                     if not isCommander(event.source.user_id):
                         line_bot_api.reply_message(event.reply_token, TextSendMessage(text='歹勢，您無權限'))

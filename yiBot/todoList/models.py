@@ -7,10 +7,16 @@ class Item(models.Model):
     content = models.TextField()
     order_num = models.IntegerField()
     create_date_time = models.DateTimeField(auto_now_add=True)
-    done = models.BooleanField(default=False)    # 是否完成，若為True則order_num為0
+    done = models.BooleanField(default=False)    # 是否完成，若為True則order_num為-1
     
     def __str__(self):
         return self.content
+    
+    def save(self, *args, **kwargs):
+        if self.done:
+            self.order_num = -1
+            
+        super(Item, self).save(*args, **kwargs)
     
     class Meta:
         ordering = ['order_num']

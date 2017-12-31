@@ -54,21 +54,31 @@ def lineBot(request):
         if isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage): # 確保為文字訊息                
                 msg = event.message.text
+                
                 if '@yibot' in msg:
                     msg = msg.replace('@yibot', '').strip()
+                    
+                    
                 elif '@list' in msg:
                     response = todoList(replyID, 'show')
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
                     continue
                 elif '@todo' in msg:
                     msg = msg.replace('@todo', '').strip()
-                    todoList(replyID, 'createItem', msg)
-                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='success'))
+                    response = todoList(replyID, 'createItem', msg)
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
                     continue
-                elif '@done':
+                elif '@done' in msg:
                     msg = msg.replace('@done', '').strip()
-                    todoList(replyID, 'doneItem')
+                    response = todoList(replyID, 'doneItem', msg)
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
                     continue
+                elif '@clear' in msg:
+                    response = todoList(replyID, 'clearItem')
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
+                    continue
+                                
+                
                 elif '@imgmap' in msg:                    
                     # FIXME: 沒作用
                     imagemap_message = ImagemapSendMessage(
@@ -103,6 +113,7 @@ def lineBot(request):
                     continue
                 
                 elif '@button' in msg:
+                    # 最多4個按鈕，超過會raise error
                     buttons_template = ButtonsTemplate(
                         title='My buttons sample', text='Hello, my buttons', actions=[
                             URITemplateAction(

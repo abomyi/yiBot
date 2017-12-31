@@ -21,6 +21,7 @@ from lineBot.meme import findMeme
 from lineBot.models import LineUser
 from lineBot.weatherApi import weatherApi
 from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
+from todoList.views import todoList
 
 
 try:
@@ -55,6 +56,19 @@ def lineBot(request):
                 msg = event.message.text
                 if '@yibot' in msg:
                     msg = msg.replace('@yibot', '').strip()
+                elif '@list' in msg:
+                    response = todoList(replyID, 'show')
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
+                    continue
+                elif '@todo' in msg:
+                    msg = msg.replace('@todo', '').strip()
+                    todoList(replyID, 'createItem', msg)
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='success'))
+                    continue
+                elif '@done':
+                    msg = msg.replace('@done', '').strip()
+                    todoList(replyID, 'doneItem')
+                    continue
                 elif '@imgmap' in msg:                    
                     # FIXME: 沒作用
                     imagemap_message = ImagemapSendMessage(

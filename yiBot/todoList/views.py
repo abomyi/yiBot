@@ -13,7 +13,7 @@ def todoList(replyID, command, msg=None):
     try:
         user = LineUser.objects.get(lineID=replyID, chatFrom='user')
     except:
-        return ''
+        return '待辦事項屬於個人隱私，請至個人聊天室下指令'
     
     if command == 'show':
         response = itemResponse(user)

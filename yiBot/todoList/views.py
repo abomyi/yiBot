@@ -41,7 +41,7 @@ def createItem(user, content):
 
 @transaction.atomic
 def maxOrderNum(user):
-    item = Item.objects.filter(user=user).last()    # model ordering有按照order_num排序，故最後一筆為最大
+    item = Item.objects.filter(user=user).exclude(order_num=-1).last()    # model ordering有按照order_num排序，故最後一筆為最大
     if item:
         return item.order_num + 1
     return 1

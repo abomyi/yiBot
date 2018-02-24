@@ -1,0 +1,23 @@
+{% extends 'main/main.html' %}
+{% load staticfiles %}
+{% block css %}
+<link rel=stylesheet href="{% static 'lottery/css/lottery.css' %}">
+{% endblock %}
+
+{% block contentName %}大樂透對獎{% endblock %}
+
+{% block content %}
+
+<table>
+  <tr><th>樂透期數</th><th>開獎日期</th><th>獎號</th><th>特別號</th></tr>
+  {% for obj in winningNumbers %}
+  <tr>
+    <td>{{obj.drawNo}}</td>
+    <td>{{obj.drawDate|date:"Y-m-d"}}</td>
+    <td>{{obj.normalNums}}</td>
+    <td>{{obj.specialNum}}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

@@ -20,6 +20,8 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'lineBot/', include('lineBot.urls', namespace='lineBot')),
+    url(r'lottery/', include('lottery.urls', namespace='lottery')),
     url(r'todoList/', include('todoList.urls', namespace='todoList')),
-    url(r'.*', include('lineBot.urls'))
+    url(r'main/', include('main.urls', namespace='main')),
+    url(r'.*', include('main.urls'))
 ]

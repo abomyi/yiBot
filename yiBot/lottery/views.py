@@ -8,6 +8,8 @@ import datetime
 def lottery(request):
     
     winningNumbers = WinningNumbers.objects.all()[:10]
+    for winningNumber in winningNumbers:
+        winningNumber.normalNums = winningNumber.normalNums.split(',')
 
     return render(request, 'lottery/lottery.html', {'winningNumbers':winningNumbers})
 

@@ -8,16 +8,74 @@
 
 {% block content %}
 
+<fieldset id=chooseNumbers>
+  <legend>請點選您的號碼</legend>
+  {% for i in "x"|rjust:"49" %}
+  <span>{{forloop.counter|stringformat:"02d"}}</span>
+  {% endfor %}
+  <p><input id=clearNums type=button value=清空已選號碼></p>
+</fieldset>
+
+
+<br><br><br>
+
 <table>
   <tr><th>樂透期數</th><th>開獎日期</th><th>獎號</th><th>特別號</th></tr>
   {% for obj in winningNumbers %}
   <tr>
     <td>{{obj.drawNo}}</td>
     <td>{{obj.drawDate|date:"Y-m-d"}}</td>
-    <td>{{obj.normalNums}}</td>
-    <td>{{obj.specialNum}}</td>
+    <td class=normalNums>
+      {% for number in obj.normalNums %}
+      <span class={{number}}>{{number}}</span>
+      {% endfor %}
+    </td>
+    <td class=specialNum>
+      <span class={{obj.specialNum}}>{{obj.specialNum}}</span>
+    </td>
   </tr>
   {% endfor %}
 </table>
 
 {% endblock %}
+
+{% block script %}
+<script>
+$(document).ready(function(){
+  var $normalNums = $('.normalNums');
+  
+  //禁用反白，否則快速連點會顯示反白
+  $('fieldset').disableSelection();
+  
+  $(document).on('click', '#clearNums', function(){
+    $('span.selected').click();
+  });
+  
+  $(document).on('click', '#chooseNumbers span', function(){
+    var $this = $(this);
+    var selectedValue = $this.html();
+    
+    if ($this.hasClass('selected')){
+      $this.removeClass('selected');
+      $('.'+selectedValue).removeClass('selected');
+    }else{
+      $this.addClass('selected');
+      $('.'+selectedValue).addClass('selected');
+    }
+    
+    $.each($normalNums, function(){
+      $tr = $(this).parent('tr');
+      
+      if ($(this).find('.selected').length >= 3){
+        $tr.addClass('win');
+      }else{
+        $tr.removeClass('win');
+      }
+    });
+    
+  });
+});
+</script>
+{% endblock %}
+
+

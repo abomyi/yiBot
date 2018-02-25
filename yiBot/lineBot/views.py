@@ -186,6 +186,9 @@ def lineBot(request):
                     if not success:
                         line_bot_api.push_message(replyID, StickerSendMessage(package_id='2', sticker_id='38'))
                     continue
+                elif msg.startswith('樂透對獎'):
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='http://yibot.herokuapp.com/lottery/'))
+                    continue
                 else:
                     continue
                 

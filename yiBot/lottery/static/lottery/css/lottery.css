@@ -1,4 +1,25 @@
+fieldset {
+  width: 80%;
+  margin: 0 auto;
+}
+
+fieldset span {
+  display: inline-block;
+  width: 2em;
+  text-align: center;
+  margin: .5em;
+  cursor: pointer;
+}
+
+span.selected {
+  background: lightcoral;
+}
+
 table td {
   text-align: center;
-  padding: 1em 0;
+  padding: .5em 0;
+}
+
+tr.win {
+  background: lightblue;
 }

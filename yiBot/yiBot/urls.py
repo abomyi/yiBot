@@ -23,5 +23,5 @@ urlpatterns = [
     url(r'lottery/', include('lottery.urls', namespace='lottery')),
     url(r'todoList/', include('todoList.urls', namespace='todoList')),
     url(r'main/', include('main.urls', namespace='main')),
-    url(r'.*', include('main.urls'))
+    url(r'.*', include('lineBot.urls'))
 ]

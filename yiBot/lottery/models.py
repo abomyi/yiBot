@@ -12,4 +12,4 @@ class WinningNumbers(models.Model):
         return self.drawNo
 
     class Meta:
-        ordering = ['drawNo', 'id']
+        ordering = ['-drawDate', '-drawNo', 'id']

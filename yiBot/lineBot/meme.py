@@ -9,15 +9,17 @@ def findMeme(keyword):
     googleURL = 'https://www.google.com.tw/search?q={0}&safe=active&source=lnms&tbm=isch'.format(keyword)
     header = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36'}
     res = requests.get(googleURL, headers=header)
+#     print(res.content)
     
     result = BeautifulSoup(res.text, 'html.parser')
     
 #     images = [json.loads(div.text)['ou'] for div in result.find_all('div',{'class':'rg_meta'})[:5]]
     images = []
-    for div in result.find_all('div', {'class':'rg_meta'}):
-        image = json.loads(div.text)['ou']
-        if image.find('https:') != -1:
-            images.append(image)
+    for img in result.find_all('img', {'class':'rg_i', 'data-iurl':True}):
+        # result.find_all('div', {'class':'rg_meta'})
+#         image = json.loads(div.text)['ou']
+        if img['data-iurl'].find('https:') != -1:
+            images.append(img['data-iurl'])
         
         if len(images) >= 5:
             # 取前五張圖片(熱門搜尋or點擊)即可
@@ -28,6 +30,7 @@ def findMeme(keyword):
 #         # 後續更新: 不實用，因為部分網站強塞https會產生「此連結網站並不安全...確定要進入此網站?」之狀況，然而Linebot無法處理此情形，故會回傳一個永遠無法載入的圖片給客戶端
 #         image = image.replace('http', 'https')
     if not images:
+#         return 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT2lYbGrESTgYqBbMXVn7LqmiMTAxoG7melcuPqclwsaRlGRl92'
         return None
     
     return random.choice(images)

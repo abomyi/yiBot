@@ -194,16 +194,12 @@ def lineBot(request):
                 
                 imgURL = findMeme(msg)
                 if not imgURL:
-#                     line_bot_api.reply_message(
-#                         event.reply_token,
-#                         TextSendMessage(text=response)
-#                     )
-                    #FIXME: 只能reply一次，想辦法把用戶ID記住，再傳一次
                     line_bot_api.reply_message(
                         event.reply_token,
                         StickerSendMessage(package_id='2',
                                            sticker_id='38')
                     )
+                    line_bot_api.push_message(replyID, TextMessage(text='查無圖片'))
                     continue
                 
                 try:
@@ -242,7 +238,7 @@ def updateUserList(event):
         replyID = userID
         profile = line_bot_api.get_profile(userID)
         user = LineUser.objects.filter(lineID=userID)
-        if not user:
+        if not user.exists():
             LineUser.objects.create(name=profile.display_name, chatFrom='user', lineID=userID)
 #     print(profile.display_name)    #使用者姓名
 #     print(profile.user_id)    #使用者ID

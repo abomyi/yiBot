@@ -7,20 +7,21 @@ from linebot.api import LineBotApi
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models.actions import PostbackAction, MessageAction, URIAction
 from linebot.models.events import MessageEvent
-from linebot.models.flex_message import FlexSendMessage
+from linebot.models.flex_message import FlexSendMessage, BubbleContainer, \
+    ImageComponent
 from linebot.models.imagemap import ImagemapSendMessage, BaseSize, \
-    URIImagemapAction, ImagemapArea, MessageImagemapAction
+    URIImagemapAction, ImagemapArea, MessageImagemapAction, Video, ExternalLink
 from linebot.models.messages import TextMessage
 from linebot.models.send_messages import TextSendMessage, ImageSendMessage, StickerSendMessage
 from linebot.models.template import ConfirmTemplate, TemplateSendMessage, ButtonsTemplate, \
     CarouselTemplate, CarouselColumn, ImageCarouselTemplate, ImageCarouselColumn
 from linebot.webhook import WebhookParser
 
+from lineBot.demo import IMG_1, IMG_2, FLEX_DEMO
 from lineBot.drawCard import drawCard
 from lineBot.meme import findMeme
 from lineBot.models import LineUser
 from lineBot.weatherApi import weatherApi
-from main.constant import IMG_1, IMG_2
 from todoList.views import todoList
 from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
 
@@ -84,14 +85,25 @@ def lineBot(request):
                                 
                 
                 elif '@imgmap' in msg:                    
-                    # FIXME: 沒作用
+                    # FIXME: 手機會顯示無法讀取照片
                     imagemap_message = ImagemapSendMessage(
-                        base_url='https://example.com/base',
+                        base_url='https://github.com/',
                         alt_text='this is an imagemap',
                         base_size=BaseSize(height=1040, width=1040),
+                        video=Video(
+                            original_content_url='https://www.w3schools.com/html/mov_bbb.mp4',
+                            preview_image_url=IMG_1,
+                            area=ImagemapArea(
+                                x=0, y=0, width=1040, height=585
+                            ),
+                            external_link=ExternalLink(
+                                link_uri='https://github.com/line/line-bot-sdk-python',
+                                label='See More',
+                            ),
+                        ),
                         actions=[
                             URIImagemapAction(
-                                link_uri='https://example.com/',
+                                link_uri='https://github.com/',
                                 area=ImagemapArea(
                                     x=0, y=0, width=520, height=1040
                                 )
@@ -118,8 +130,7 @@ def lineBot(request):
                             text='message text'
                         )
                     ])
-                    template_message = TemplateSendMessage(
-                        alt_text='Confirm alt text', template=confirm_template)
+                    template_message = TemplateSendMessage(alt_text='Confirm alt text', template=confirm_template)
                     line_bot_api.reply_message(event.reply_token, template_message)
                     continue
                 
@@ -141,8 +152,7 @@ def lineBot(request):
                                 uri='http://example.com/'
                             )
                         ])
-                    template_message = TemplateSendMessage(
-                        alt_text='Buttons alt text', template=buttons_template)
+                    template_message = TemplateSendMessage(alt_text='Buttons alt text', template=buttons_template)
                     line_bot_api.reply_message(event.reply_token, template_message)
                     continue
                 
@@ -205,23 +215,12 @@ def lineBot(request):
                     line_bot_api.reply_message(event.reply_token, template_message)
                     continue
                 elif msg.startswith('@flex'):
+                    # 可參考https://developers.line.biz/flex-simulator/
                     flex_message = FlexSendMessage(
                         alt_text='hello',
-                        contents={
-                            'type': 'bubble',
-                            'direction': 'ltr',
-                            'hero': {
-                                'type': 'image',
-                                'url': IMG_1,
-                                'size': 'full',
-                                'aspectRatio': '20:13',
-                                'aspectMode': 'cover',
-                                'action': { 'type': 'uri', 'uri': 'http://example.com', 'label': 'label' }
-                            }
-                        }
+                        contents=FLEX_DEMO
                     )
-                    template_message = TemplateSendMessage(alt_text='flex_message', template=flex_message)
-                    line_bot_api.reply_message(event.reply_token, template_message)
+                    line_bot_api.reply_message(event.reply_token, flex_message)
                     continue
                 
                 

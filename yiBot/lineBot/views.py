@@ -37,7 +37,6 @@ except:
 @csrf_exempt
 def lineBot(request):
     if request.method == 'GET':
-        findMeme('怕 風水世家')
         return HttpResponse()
     
     # POST

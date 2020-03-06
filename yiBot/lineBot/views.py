@@ -5,23 +5,24 @@ from django.views.decorators.csrf import csrf_exempt
 import linebot
 from linebot.api import LineBotApi
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.models.actions import PostbackAction, MessageAction, URIAction
 from linebot.models.events import MessageEvent
+from linebot.models.flex_message import FlexSendMessage
 from linebot.models.imagemap import ImagemapSendMessage, BaseSize, \
     URIImagemapAction, ImagemapArea, MessageImagemapAction
 from linebot.models.messages import TextMessage
 from linebot.models.send_messages import TextSendMessage, ImageSendMessage, StickerSendMessage
-from linebot.models.template import ConfirmTemplate, MessageTemplateAction, \
-    TemplateSendMessage, ButtonsTemplate, URITemplateAction, \
-    PostbackTemplateAction, CarouselTemplate, CarouselColumn, \
-    ImageCarouselTemplate, ImageCarouselColumn, DatetimePickerTemplateAction
+from linebot.models.template import ConfirmTemplate, TemplateSendMessage, ButtonsTemplate, \
+    CarouselTemplate, CarouselColumn, ImageCarouselTemplate, ImageCarouselColumn
 from linebot.webhook import WebhookParser
 
 from lineBot.drawCard import drawCard
 from lineBot.meme import findMeme
 from lineBot.models import LineUser
 from lineBot.weatherApi import weatherApi
-from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
+from main.constant import IMG_1, IMG_2
 from todoList.views import todoList
+from yiBot.settings import LINE_CHANNEL_ACCESS_TOKEN, LINE_CHANNEL_SECRET
 
 
 try:
@@ -36,6 +37,7 @@ except:
 @csrf_exempt
 def lineBot(request):
     if request.method == 'GET':
+        findMeme('怕 風水世家')
         return HttpResponse()
     
     # POST
@@ -55,8 +57,11 @@ def lineBot(request):
             if isinstance(event.message, TextMessage): # 確保為文字訊息                
                 msg = event.message.text
                 
-                if '@yibot' in msg:
-                    msg = msg.replace('@yibot', '').strip()
+                if msg.startswith('@yibot') or msg.startswith('@圖 '):
+                    if msg.startswith('@yibot'):
+                        msg = msg.replace('@yibot', '').strip()
+                    else:
+                        msg = msg[3:]
                     
                     
                 elif '@list' in msg:
@@ -104,8 +109,15 @@ def lineBot(request):
                     continue
                 elif '@confirm' in msg:
                     confirm_template = ConfirmTemplate(text='Do it?', actions=[
-                        MessageTemplateAction(label='Yes', text='Yes!'),
-                        MessageTemplateAction(label='No', text='No!'),
+                        PostbackAction(
+                            label='postback',
+                            display_text='postback text',
+                            data='action=buy&itemid=1'
+                        ),
+                        MessageAction(
+                            label='message',
+                            text='message text'
+                        )
                     ])
                     template_message = TemplateSendMessage(
                         alt_text='Confirm alt text', template=confirm_template)
@@ -116,13 +128,19 @@ def lineBot(request):
                     # 最多4個按鈕，超過會raise error
                     buttons_template = ButtonsTemplate(
                         title='My buttons sample', text='Hello, my buttons', actions=[
-                            URITemplateAction(
-                                label='Go to line.me', uri='https://line.me'),
-                            PostbackTemplateAction(label='ping', data='ping'),
-                            PostbackTemplateAction(
-                                label='ping with text', data='ping',
-                                text='ping'),
-                            MessageTemplateAction(label='Translate Rice', text='米')
+                            PostbackAction(
+                                label='postback',
+                                display_text='postback text',
+                                data='action=buy&itemid=1'
+                            ),
+                            MessageAction(
+                                label='message',
+                                text='message text'
+                            ),
+                            URIAction(
+                                label='uri',
+                                uri='http://example.com/'
+                            )
                         ])
                     template_message = TemplateSendMessage(
                         alt_text='Buttons alt text', template=buttons_template)
@@ -131,37 +149,81 @@ def lineBot(request):
                 
                 elif '@carousel' in msg:
                     carousel_template = CarouselTemplate(columns=[
-                        CarouselColumn(text='hoge1', title='fuga1', actions=[
-                            URITemplateAction(
-                                label='Go to line.me', uri='https://line.me'),
-                            PostbackTemplateAction(label='ping', data='ping')
+                        CarouselColumn(title='this is menu1', text='description1', actions=[
+                            PostbackAction(
+                                label='postback1',
+                                display_text='postback text1',
+                                data='action=buy&itemid=1'
+                            ),
+                            MessageAction(
+                                label='message1',
+                                text='message text1'
+                            ),
+                            URIAction(
+                                label='uri1',
+                                uri='http://example.com/1'
+                            )
                         ]),
-                        CarouselColumn(text='hoge2', title='fuga2', actions=[
-                            PostbackTemplateAction(
-                                label='ping with text', data='ping',
-                                text='ping'),
-                            MessageTemplateAction(label='Translate Rice', text='米')
+                        CarouselColumn(title='this is menu2', text='description2', actions=[
+                            PostbackAction(
+                                label='postback2',
+                                display_text='postback text2',
+                                data='action=buy&itemid=2'
+                            ),
+                            MessageAction(
+                                label='message2',
+                                text='message text2'
+                            ),
+                            URIAction(
+                                label='uri2',
+                                uri='http://example.com/2'
+                            )
                         ]),
                     ])
-                    template_message = TemplateSendMessage(
-                        alt_text='Carousel alt text', template=carousel_template)
+                    template_message = TemplateSendMessage(alt_text='Carousel alt text', template=carousel_template)
                     line_bot_api.reply_message(event.reply_token, template_message)
                     continue
                 elif '@img_carousel' in msg:
                     image_carousel_template = ImageCarouselTemplate(columns=[
-                        ImageCarouselColumn(image_url='https://dvblobcdnea.azureedge.net//Content/Upload/Popular/Images/2017-06/e99e6b5e-ca6c-4c19-87b7-dfd63db6381a_m.jpg',
-                                            action=DatetimePickerTemplateAction(label='datetime',
-                                                                                data='datetime_postback',
-                                                                                mode='datetime')),
-                        ImageCarouselColumn(image_url='https://cdn2.ettoday.net/images/2457/d2457712.jpg',
-                                            action=DatetimePickerTemplateAction(label='date',
-                                                                                data='date_postback',
-                                                                                mode='date'))
+                        ImageCarouselColumn(
+                            image_url=IMG_1,
+                            action=PostbackAction(
+                                label='postback1',
+                                display_text='postback text1',
+                                data='action=buy&itemid=1'
+                            )
+                        ),
+                        ImageCarouselColumn(
+                            image_url=IMG_2,
+                            action=PostbackAction(
+                                label='postback2',
+                                display_text='postback text2',
+                                data='action=buy&itemid=2'
+                            )
+                        )
                     ])
-                    template_message = TemplateSendMessage(
-                        alt_text='ImageCarousel alt text', template=image_carousel_template)
+                    template_message = TemplateSendMessage(alt_text='ImageCarousel alt text', template=image_carousel_template)
                     line_bot_api.reply_message(event.reply_token, template_message)
-                
+                    continue
+                elif msg.startswith('@flex'):
+                    flex_message = FlexSendMessage(
+                        alt_text='hello',
+                        contents={
+                            'type': 'bubble',
+                            'direction': 'ltr',
+                            'hero': {
+                                'type': 'image',
+                                'url': IMG_1,
+                                'size': 'full',
+                                'aspectRatio': '20:13',
+                                'aspectMode': 'cover',
+                                'action': { 'type': 'uri', 'uri': 'http://example.com', 'label': 'label' }
+                            }
+                        }
+                    )
+                    template_message = TemplateSendMessage(alt_text='flex_message', template=flex_message)
+                    line_bot_api.reply_message(event.reply_token, template_message)
+                    continue
                 
                 
                 
@@ -187,7 +249,7 @@ def lineBot(request):
                         line_bot_api.push_message(replyID, StickerSendMessage(package_id='2', sticker_id='38'))
                     continue
                 elif msg.startswith('樂透對獎'):
-                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='http://yibot.herokuapp.com/lottery/'))
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text='https://yibot.herokuapp.com/lottery/'))
                     continue
                 else:
                     continue
@@ -196,10 +258,9 @@ def lineBot(request):
                 if not imgURL:
                     line_bot_api.reply_message(
                         event.reply_token,
-                        StickerSendMessage(package_id='2',
-                                           sticker_id='38')
+                        TextMessage(text='查無圖片')
                     )
-                    line_bot_api.push_message(replyID, TextMessage(text='查無圖片'))
+                    line_bot_api.push_message(replyID, StickerSendMessage(package_id='2', sticker_id='38'))
                     continue
                 
                 try:

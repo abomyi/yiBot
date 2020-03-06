@@ -3,7 +3,7 @@ from lineBot.models import LineUser
 
 # Create your models here.
 class Item(models.Model):
-    user = models.ForeignKey(LineUser)
+    user = models.ForeignKey(LineUser, on_delete=models.CASCADE)
     content = models.TextField()
     order_num = models.IntegerField()
     create_date_time = models.DateTimeField(auto_now_add=True)

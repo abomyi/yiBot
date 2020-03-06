@@ -1,9 +1,9 @@
-from django.conf.urls import url
+from django.urls import path
 
 from lottery import views
 
-
+app_name = 'lottery'
 urlpatterns = [
-    url(r'^getLotteryNumbers/$', views.getLotteryNumbers, name='getLotteryNumbers'),
-    url(r'^$', views.lottery, name='lottery'),
+    path('getLotteryNumbers/', views.getLotteryNumbers, name='getLotteryNumbers'),
+    path('', views.lottery, name='lottery'),
 ]

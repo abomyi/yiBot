@@ -1,9 +1,11 @@
-from django.conf.urls import url
+from django.urls import path
 
 from lineBot import views
 from todoList import views as todoViews
 
+
+app_name = 'lineBot'
 urlpatterns = [
-    url(r'^notifyTodo/$', todoViews.notifyTodo, name='notifyTodo'),
-    url(r'^$', views.lineBot, name='lineBot'),
+    path('notifyTodo/', todoViews.notifyTodo, name='notifyTodo'),
+    path('', views.lineBot, name='lineBot'),
 ]

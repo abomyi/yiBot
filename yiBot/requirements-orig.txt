@@ -1,0 +1,8 @@
+django
+django-toolbelt
+psycopg2
+rollbar
+line-bot-sdk
+requests
+pyquery
+beautifulsoup4

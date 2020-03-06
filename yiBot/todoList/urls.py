@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import path
 
 from todoList import views
 
-
+app_name = 'todoList'
 urlpatterns = [
-    url(r'^$', views.todoList, name='todoList'),
+    path('', views.todoList, name='todoList'),
 ]

@@ -1,4 +1,4 @@
-# Yibot LINE 聊天機器人
+# LINE 聊天機器人 Yibot
 
 ###### 使用方式
 

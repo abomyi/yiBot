@@ -11,7 +11,7 @@ future==0.18.2
 gunicorn==20.0.4
 idna==2.9
 line-bot-sdk==1.16.0
-lxml==4.5.0
+lxml==4.6.2
 psycopg2==2.8.4
 pyquery==1.4.1
 pytz==2019.3
